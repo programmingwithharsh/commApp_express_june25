@@ -2,6 +2,7 @@ import express from 'express'; // ES6 Import
 
 const app = express();
 const port = 4200;
+app.use(express.json());
 
 // GET API
 app.get('/', (req, res) => {
