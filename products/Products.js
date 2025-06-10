@@ -41,6 +41,38 @@ app.delete('/product/:id', (req, res) => {
     })
 });
 
+// Get Product by id
+app.get('/product/:id', (req, res) => {
+    Product.findById(req.params.id).then((product) => {
+        if (product) {
+            res.json(product);
+        } else {
+            res.status(400).send('Product not found');
+        }
+    })
+});
+
+// Update product by id
+app.put('/product/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+        const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
+            new: true, // return updated document instead of original
+            runValidators: true // schema validations are applied during update
+        })
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' })
+        }
+
+        res.json({ message: 'Product updated Successfully', data: updatedProduct });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error Updating Product', error: error.message });
+    }
+});
+
 app.listen(port, () => {
     console.log(`App is running on http://localhost:${port}`)
 })
