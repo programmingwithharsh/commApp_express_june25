@@ -1,13 +1,9 @@
 const express = require("express");
-require('../db/db');
-const Customer = require('./Customer');
-
-const app = express();
-const port = 3001;
-app.use(express.json());
+const router = express.Router();
+const Customer = require('../models/Customer');
 
 // GET Customers API
-app.get('/customers', (req, res) => {
+router.get('/', (req, res) => {
     console.log(req.body)
     Customer.find().then((customers) => {
         if (customers.length !== 0) {
@@ -19,7 +15,7 @@ app.get('/customers', (req, res) => {
 })
 
 // Find Customer By Id
-app.get('/customers/:id', (req, res) => {
+router.get('/:id', (req, res) => {
     //console.log(req.params);
     Customer.findById(req.params.id).then((customer) => {
         if (customer) {
@@ -31,7 +27,7 @@ app.get('/customers/:id', (req, res) => {
 });
 
 // Create new customer
-app.post('/customers', (req, res) => {
+router.post('/', (req, res) => {
     const newCustomer = new Customer({ ...req.body });
     console.log(newCustomer);
     newCustomer.save().then(() => {
@@ -43,7 +39,7 @@ app.post('/customers', (req, res) => {
 });
 
 // Delete customer
-app.delete('/customer/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     Customer.findOneAndDelete(req.params.id).then((customer) => {
         if (customer) {
             res.json('Customer deleted Successfully');
@@ -55,6 +51,4 @@ app.delete('/customer/:id', (req, res) => {
     })
 });
 
-app.listen(port, () => {
-    console.log(`Customer Application is listening on port ${port}`)
-})
+module.exports = router;

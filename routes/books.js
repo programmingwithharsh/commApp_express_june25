@@ -1,14 +1,9 @@
 const express = require("express");
-require('../db/db');
-
-const Book = require('./Book');
-
-const app = express();
-const port = 3000;
-app.use(express.json());
+const router = express.Router();
+const Book = require('../models/Book');
 
 // GET API
-app.get('/books', (req, res) => {
+router.get('/', (req, res) => {
     Book.find().then((books) => {
         if (books.length !== 0) {
             res.json(books);
@@ -19,7 +14,7 @@ app.get('/books', (req, res) => {
 })
 
 // dynamic url
-app.get('/book/:id', (req, res) => {
+router.get('/:id', (req, res) => {
     Book.findById(req.params.id).then((book) => {
         if (book) {
             res.json(book);
@@ -29,7 +24,7 @@ app.get('/book/:id', (req, res) => {
     })
 });
 
-app.post('/book', (req, res) => {
+router.post('/', (req, res) => {
     const newBook = new Book({ ...req.body });
     newBook.save().then(() => {
         res.send('New Book Created Successfully');
@@ -39,7 +34,7 @@ app.post('/book', (req, res) => {
 });
 
 // dynamic url
-app.delete('/book/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     Book.findOneAndDelete(req.params.id).then((book) => {
         if (book) {
             res.json('Book deleted Successfully');
@@ -49,6 +44,4 @@ app.delete('/book/:id', (req, res) => {
     })
 });
 
-app.listen(port, () => {
-    console.log(`Book Application is listening on port ${port}`)
-})
+module.exports = router;

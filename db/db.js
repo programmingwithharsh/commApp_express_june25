@@ -1,3 +1,3 @@
 const mongoose = require('mongoose'); // import module
-const MONGODB_URL = "mongodb://127.0.0.1:27017/myapp";
-mongoose.connect(MONGODB_URL);
+require('dotenv').config({ path: '.env.local' });
+mongoose.connect(process.env.MONGODB_URL);

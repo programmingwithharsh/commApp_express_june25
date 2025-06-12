@@ -1,16 +1,9 @@
 const express = require("express");
-const cors = require('cors')
-require('../db/db');
-
-const Product = require('./Product');
-
-const app = express();
-app.use(cors());
-const port = 4200;
-app.use(express.json());
+const router = express.Router();
+const Product = require('../models/Product');
 
 // To add new product in Mongodb
-app.post('/product', (req, res) => {
+router.post('/', (req, res) => {
     const newProduct = new Product({ ...req.body });
     newProduct.save().then(() => {
         res.status(201).json({ message: 'Product Created Successfully', data: newProduct });
@@ -20,7 +13,7 @@ app.post('/product', (req, res) => {
 });
 
 // To get all Products
-app.get('/products', (req, res) => {
+router.get('/', (req, res) => {
     Product.find().then((products) => {
         if (products.length !== 0) {
             res.json(products);
@@ -31,7 +24,7 @@ app.get('/products', (req, res) => {
 })
 
 // Delete Product
-app.delete('/product/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     Product.findByIdAndDelete(req.params.id).then((product) => {
         if (product) {
             res.json({ message: 'Product deleted Successfully' });
@@ -42,7 +35,7 @@ app.delete('/product/:id', (req, res) => {
 });
 
 // Get Product by id
-app.get('/product/:id', (req, res) => {
+router.get('/:id', (req, res) => {
     Product.findById(req.params.id).then((product) => {
         if (product) {
             res.json(product);
@@ -53,7 +46,7 @@ app.get('/product/:id', (req, res) => {
 });
 
 // Update product by id
-app.put('/product/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
@@ -73,6 +66,4 @@ app.put('/product/:id', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`App is running on http://localhost:${port}`)
-})
+module.exports = router;
